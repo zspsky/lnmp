@@ -6,7 +6,7 @@ pip install cymysql
 yum install git
 yum install -y supervisor
 cd /root
-git clone https://github.com/breakwa11/shadowsocks.git
+git clone -b manyuser https://github.com/breakwa11/shadowsocks.git
 cd shadowsocks
 cp apiconfig.py userapiconfig.py
 cp mysql.json usermysql.json
