@@ -131,6 +131,3 @@ Follow the instructions in [Wiki Installation page](https://github.com/lj2007331
 
 For feedback, questions, and to follow the progress of the project (Chinese): <br />
 [lnmp最新源码一键安装脚本](https://blog.linuxeye.com/31.html)<br />
-##说明
-都是fork自 https://github.com/lj2007331/lnmp
-只是因为github刚用不熟悉.才下载下来.重新上传.
