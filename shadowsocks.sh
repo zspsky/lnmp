@@ -35,7 +35,6 @@ PUBLIC_IPADDR=`../include/get_public_ipaddr.py`
 Check_shadowsocks() {
     [ -f /usr/local/bin/ss-server ] && SS_version=1
     [ -f /usr/bin/ssserver -o -f /usr/local/bin/ssserver ] && SS_version=2
-
 }
 
 AddUser_shadowsocks() {
@@ -93,18 +92,17 @@ if [ "$OS" == 'CentOS' ]; then
         echo 'Please select Shadowsocks server version:'
         echo -e "\t${CMSG}1${CEND}. Install Shadowsocks-libev"
         echo -e "\t${CMSG}2${CEND}. Install Shadowsocks-python"
-        echo -e "\t${CMSG}3${CEND}. Install Shadowsocks-ssr"       
         read -p "Please input a number:(Default 1 press Enter) " SS_version
         [ -z "$SS_version" ] && SS_version=1
-        if [[ ! $SS_version =~ ^[1-3]$ ]];then
-            echo "${CWARNING}input error! Please only input number 1,2,3${CEND}"
+        if [[ ! $SS_version =~ ^[1-2]$ ]];then
+            echo "${CWARNING}input error! Please only input number 1,2${CEND}"
         else
             break
         fi
     done
     AddUser_shadowsocks
     Iptables_set
-    for Package in wget unzip openssl-devel gcc swig python python-devel python-setuptools supervisor autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto
+    for Package in wget unzip openssl-devel gcc swig python python-devel python-setuptools autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto
     do
         yum -y install $Package
     done
@@ -158,58 +156,6 @@ if [ -f  /usr/local/bin/ss-server ];then
 else
    echo
    echo "${CQUESTION}Shadowsocks-libev install failed! Please visit https://oneinstack.com${CEND}"
-   exit 1
-fi
-
-}
-Install_shadowsocks-ssr() {
-cd /root
-git clone https://github.com/breakwa11/shadowsocks.git
-cd shadowsocks
-cp apiconfig.py userapiconfig.py
-cp mysql.json usermysql.json
-#可下载配好的usermysql.json文件
-scp root@vpn.hwinfo.party:/root/usermysql.json usermysql.json
-echo "可下载配好的usermysql.json文件"
-cat >user-config.json<<-EOF
-{
-    "server": "0.0.0.0",
-    "server_ipv6": "::",
-    "server_port": 8388,
-    "local_address": "127.0.0.1",
-    "local_port": 1080,
-    "password": "m",
-    "timeout": 120,
-    "udp_timeout": 60,
-    "method": "aes-256-cfb",
-    "protocol": "auth_sha1_compatible",
-    "protocol_param": "",
-    "obfs": "http_simple_compatible",
-    "obfs_param": "",
-    "dns_ipv6": false,
-    "connect_verbose_info": 0,
-    "redirect": "",
-    "fast_open": false
-}
-EOF
-chmod +x *.sh
-cat > /etc/supervisord.d/shadowsocks.ini<<EOF
-[program:shadowsocks]  
-command=/usr/bin/python  /root/shadowsocks/server.py 
-autorestart=true
-user=root
-EOF
-
-systemctl restart supervisord
-systemctl enable supervisord
-supervisorctl reload
-supervisorctl restart shadowsocks
-
-if [ -f  /root/shadowsocks/server.py ];then
-echo "insert ok;"
-else
-   echo
-   echo "${CQUESTION}Shadowsocks-ssr install failed! Please visit https://oneinstack.com${CEND}"
    exit 1
 fi
 
